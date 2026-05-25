@@ -9,13 +9,58 @@
         DATA 0,0,0,0
 
 MENU    DATA 0
-        DATA LOOP
+        DATA START
         STRI 'SPRITES'
         BSS 0
 
-* Wait for keypress then exit
-LOOP    SCAN               * Scan keyboard
-        BR LOOP            * Loop if no new key
-        EXIT               * Quit back to title screen
+START
+       ALL >20             ; Clear screen
+       BACK >12            ; Green background
 
-        END
+; === VDP registers ===
+       ST >00,@>83D0
+       MOVE 1,@>83D0,#0    ; Reg 0 = Graphics mode
+
+       ST >E3,@>83D4       ; Reg 1 = 16x16 magnified + display on
+       MOVE 1,@>83D4,#1
+
+       ST >06,@>83DA
+       MOVE 1,@>83DA,#5    ; Reg 5 = SAT at >0300
+
+       ST >00,@>83DC
+       MOVE 1,@>83DC,#6    ; Reg 6 = Sprite patterns at >0000 base
+
+; Copy rectangle outline pattern (32 bytes for 16x16 magnified)
+       MOVE 32,G@GFXDATA,V@>0400
+
+; Sprite Attribute Table
+       MOVE 9,G@SPRATTR,V@>0300
+
+; === Auto motion ===
+       MOVE 8,G@SPRMOVE,V@>0780
+       ST >02,@>837A              ; 2 moving sprites
+
+LOOP   SCAN
+       BS   DONE
+       B    LOOP
+
+DONE   EXIT
+
+; ========================
+; Data
+; ========================
+GFXDATA
+; 8x8 rectangle outline pattern (will be magnified to 16x16)
+       BYTE >FF,>81,>81,>81,>81,>81,>81,>FF   ; Top + sides + bottom
+       BYTE >FF,>81,>81,>81,>81,>81,>81,>FF   ; repeated for the other 3 chars
+       BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
+       BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
+
+SPRATTR
+       BYTE >50,>3C,>80,>04   ; Sprite 0: Y=80, X=60, Pattern >80, Color 4 (dark blue)
+       BYTE >8C,>A0,>80,>07   ; Sprite 1: Y=140, X=160, Pattern >80, Color 7 (cyan)
+       BYTE >D0
+
+SPRMOVE
+       BYTE >08,>10,>00,>00   ; Sprite 0: down-right
+       BYTE >F8,>F0,>00,>00   ; Sprite 1: up-left

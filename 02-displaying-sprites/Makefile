@@ -1,7 +1,7 @@
 ASM = xga99.py
 
-bin: src/hello.gpl
-	$(ASM) src/hello.gpl -o out/HELLOG.bin
+bin: src/sprites.gpl
+	$(ASM) src/sprites.gpl -o out/SPRITESG.bin
 
-cart: src/hello.gpl
-	$(ASM) -c src/hello.gpl -o out/HELLO.rpk
+cart: src/sprites.gpl
+	$(ASM) -c src/sprites.gpl -o out/SPRITES.rpk

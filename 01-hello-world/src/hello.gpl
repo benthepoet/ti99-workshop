@@ -15,7 +15,7 @@ MENU    DATA 0             * Next menu item (none)
 
 * Main program
 START   ALL >20            * Clear screen with spaces (char >20)
-        BACK >1F           * Background dark blue (low nibble), black text (high nibble)
+        BACK >12           * Background dark blue (low nibble), black text (high nibble)
 
 * Load standard character patterns (ASCII 32-95 and 96-126)
         DST >0900,@>834A   * Pattern table address for chars 32-95
