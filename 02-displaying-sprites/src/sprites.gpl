@@ -37,12 +37,20 @@ START
        MOVE 9,G@SPRATTR,V@>0300
 
 ; === Auto motion ===
-       MOVE 8,G@SPRMOVE,V@>0780
-       ST >02,@>837A              ; 2 moving sprites
+;       MOVE 8,G@SPRMOVE,V@>0780
+;       ST >02,@>837A              ; 2 moving sprites
+
+WAITVBL
+        ST @>837B,@>8300
+        AND >80,@>8300
+        CEQ >80,@>8300
+        BR WAITVBL
+
+        ST >00,@>8300
 
 LOOP   SCAN
        BS   DONE
-       B    LOOP
+       B    WAITVBL
 
 DONE   EXIT
 
