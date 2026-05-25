@@ -1,38 +1,38 @@
 * Simple GPL "Hello World" with background color change
-       GROM >6000
-       AORG >0000
+        GROM >6000
+        AORG >0000
 
 * Cartridge header
-       DATA >AA01         * Valid cartridge
-       DATA 0,0
-       DATA MENU          * Pointer to menu
-       DATA 0,0,0,0
+        DATA >AA01         * Valid cartridge
+        DATA 0,0
+        DATA MENU          * Pointer to menu
+        DATA 0,0,0,0
 
-MENU   DATA 0             * Next menu item (none)
-       DATA START         * Entry point
-       STRI 'HELLO GPL'   * Menu title (length byte auto-added by STRI)
-       BSS 0              
+MENU    DATA 0             * Next menu item (none)
+        DATA START         * Entry point
+        STRI 'HELLO GPL'   * Menu title (length byte auto-added by STRI)
+        BSS 0              
 
 * Main program
-START  ALL >20            * Clear screen with spaces (char >20)
-       BACK >1F           * Background dark blue (low nibble), black text (high nibble)
+START   ALL >20            * Clear screen with spaces (char >20)
+        BACK >1F           * Background dark blue (low nibble), black text (high nibble)
 
 * Load standard character patterns (ASCII 32-95 and 96-126)
-       DST >0900,@>834A   * Pattern table address for chars 32-95
-       CALL >0018
-       DST >0B00,@>834A   * Pattern table address for chars 96-126
-       CALL >004A
+        DST >0900,@>834A   * Pattern table address for chars 32-95
+        CALL >0018
+        DST >0B00,@>834A   * Pattern table address for chars 96-126
+        CALL >004A
 
 * Display "Hello World" centered using FMT mode
-       FMT
-       ROW 12             * Row 12 (0-based, roughly center)
-       COL 11             * Column for centering ~11 chars
-       HTEX 'Hello World' ; Horizontal text
-       FEND
+        FMT
+        ROW 12             * Row 12 (0-based, roughly center)
+        COL 11             * Column for centering ~11 chars
+        HTEX 'Hello World' ; Horizontal text
+        FEND
 
 * Wait for keypress then exit
-LOOP   SCAN               * Scan keyboard
-       BR LOOP            * Loop if no new key
-       EXIT               * Quit back to title screen
+LOOP    SCAN               * Scan keyboard
+        BR LOOP            * Loop if no new key
+        EXIT               * Quit back to title screen
 
-       END
+        END

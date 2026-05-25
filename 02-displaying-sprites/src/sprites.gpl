@@ -1,0 +1,21 @@
+* Simple GPL demo of sprites
+        GROM >6000
+        AORG >0000
+
+* Cartridge header
+        DATA >AA01         * Valid cartridge
+        DATA 0,0
+        DATA MENU          * Pointer to menu
+        DATA 0,0,0,0
+
+MENU    DATA 0
+        DATA LOOP
+        STRI 'SPRITES'
+        BSS 0
+
+* Wait for keypress then exit
+LOOP    SCAN               * Scan keyboard
+        BR LOOP            * Loop if no new key
+        EXIT               * Quit back to title screen
+
+        END
