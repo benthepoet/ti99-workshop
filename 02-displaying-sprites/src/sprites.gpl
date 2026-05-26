@@ -14,6 +14,8 @@ MENU    DATA 0
         BSS 0
 
 START
+       XML >12             ; Disable interrupts
+
        ALL >20             ; Clear screen
        BACK >12            ; Green background
 
@@ -41,12 +43,9 @@ START
 ;       ST >02,@>837A              ; 2 moving sprites
 
 WAITVBL
-        ST @>837B,@>8300
-        AND >80,@>8300
-        CEQ >80,@>8300
-        BR WAITVBL
-
-        ST >00,@>8300
+        ST @>8802,@>8300           ; Read VDP status byte
+        CLOG >80,@>8300            ; Test if bit 7 is set
+        BS WAITVBL                 ; Wait if no interrupt
 
 LOOP   SCAN
        BS   DONE
