@@ -1,4 +1,4 @@
-* Simple GPL demo of sprites
+* Simple GPL demo of keyboard movement
         GROM >6000
         AORG >0000
 
@@ -11,7 +11,7 @@
 
 MENU    DATA 0
         DATA START
-        STRI 'SPRITES'
+        STRI 'KEYBOARD'
         BSS 0
 
 START
@@ -45,14 +45,17 @@ FILLCLR
         MOVE 32,G@GFXDATA,V@>0400
 
 ; Sprite Attribute Table
-        MOVE 8,G@SPRATTR,V@>0300   ; Copy sprite attributes to VDP
-        MOVE 2,G@SPRATTR,@>8301    ; Copy Y/X into RAM 
+        MOVE 4,G@SPRATTR,V@>0300   ; Copy sprite attributes to VDP
+        MOVE 2,G@SPRATTR,@>8301    ; Copy X/Y into RAM 
 
         FMT
-        COL 12
-        ROW 4
-        HTEX 'WELCOME!'
+        COL 6
+        ROW 12
+        HTEX 'USE W,A,S,D TO MOVE!'
         FEND
+
+        ST >03,@>8374
+        CLR @>83C8
 
 WAITVBL
         ST @>837B,@>8300           ; Read VDP status byte
@@ -61,16 +64,44 @@ WAITVBL
 
         ST >00,@>837B              ; Clear VDP status byte
 
-        INC @>8301                 ; Increment Y
-        INC @>8302                 ; Increment X
-
         MOVE 2,@>8301,V@>0300      ; Push Y/X to VDP
 
-LOOP    SCAN
-        BS   DONE
-        B    WAITVBL
+        ; Scan the keyboard
+        SCAN
 
-DONE    EXIT
+        ; Check for the A key
+        CEQ >41,@>8375
+        BS MOVELEFT
+
+        ; Check for the D key
+        CEQ >44,@>8375
+        BS MOVERIGHT
+
+        ; Check for the W key
+        CEQ >57,@>8375
+        BS MOVEUP
+
+        ; Check for the S key
+        CEQ >53,@>8375
+        BS MOVEDOWN
+
+        B WAITVBL
+
+MOVELEFT
+        DEC @>8302
+        B WAITVBL
+
+MOVERIGHT
+        INC @>8302
+        B WAITVBL
+
+MOVEUP
+        DEC @>8301
+        B WAITVBL
+
+MOVEDOWN
+        INC @>8301
+        B WAITVBL
 
 ; ========================
 ; Data
@@ -82,5 +113,4 @@ GFXDATA
         BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
 
 SPRATTR
-        BYTE >10,>3C,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 4 (dark blue)
-        BYTE >8C,>A0,>80,>08   ; Sprite 1: Y=1F0, X=160, Pattern >80, Color 7 (red)
+        BYTE >10,>7A,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 4 (dark blue)
