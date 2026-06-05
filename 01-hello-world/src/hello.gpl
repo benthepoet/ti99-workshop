@@ -4,7 +4,8 @@
 
 * Cartridge header
         DATA >AA01         * Valid cartridge
-        DATA 0,0
+        DATA >0000
+        DATA >0000
         DATA MENU          * Pointer to menu
         DATA 0,0,0,0
 

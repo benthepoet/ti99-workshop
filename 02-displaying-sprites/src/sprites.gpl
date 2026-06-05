@@ -4,7 +4,8 @@
 
 * Cartridge header
         DATA >AA01         * Valid cartridge
-        DATA 0,0
+        DATA >0000
+        DATA >0000
         DATA MENU          * Pointer to menu
         DATA 0,0,0,0
 
@@ -14,16 +15,24 @@ MENU    DATA 0
         BSS 0
 
 START
-        XML >12             ; Disable interrupts
-
         ALL >20             ; Clear screen
-        BACK >12            ; Green background
+        BACK >14            ; Green background
+
+        ST >1F,@>8300
+        ST >20,@>8301
+        DST >0380,@>8302
+        
+FILLCLR
+        MOVE 1,@>8300,V*>8302
+        DINC @>8302
+        DEC @>8301
+        BR FILLCLR
 
 ; === VDP registers ===
         ST >00,@>83D0
         MOVE 1,@>83D0,#0    ; Reg 0 = Graphics mode
 
-        ST >E3,@>83D4       ; Reg 1 = 16x16 magnified + display on
+        ST >E2,@>83D4       ; Reg 1 = 16x16 + display on
         MOVE 1,@>83D4,#1
 
         ST >06,@>83DA
@@ -36,22 +45,32 @@ START
         MOVE 32,G@GFXDATA,V@>0400
 
 ; Sprite Attribute Table
-        MOVE 9,G@SPRATTR,V@>0300
+        MOVE 9,G@SPRATTR,V@>0300   ; Copy sprite attributes to VDP
+        MOVE 2,G@SPRATTR,@>8301    ; Copy X/Y into RAM 
 
-; === Auto motion ===
-;       MOVE 8,G@SPRMOVE,V@>0780
-;       ST >02,@>837A              ; 2 moving sprites
+        FMT
+        COL 12
+        ROW 4
+        HTEX 'WELCOME!'
+        FEND
 
 WAITVBL
-        ST @>8802,@>8300           ; Read VDP status byte
+        ST @>837B,@>8300           ; Read VDP status byte
         CLOG >80,@>8300            ; Test if bit 7 is set
         BS WAITVBL                 ; Wait if no interrupt
 
-LOOP   SCAN
+        ST >00,@>837B              ; Clear VDP status byte
+
+        INC @>8301                 ; Increment X
+        INC @>8302                 ; Increment Y
+
+        MOVE 2,@>8301,V@>0300      ; Push X/Y to VDP
+
+LOOP    SCAN
         BS   DONE
         B    WAITVBL
 
-DONE   EXIT
+DONE    EXIT
 
 ; ========================
 ; Data
@@ -64,10 +83,12 @@ GFXDATA
         BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
 
 SPRATTR
-        BYTE >50,>3C,>80,>04   ; Sprite 0: Y=80, X=60, Pattern >80, Color 4 (dark blue)
-        BYTE >8C,>A0,>80,>07   ; Sprite 1: Y=140, X=160, Pattern >80, Color 7 (cyan)
-        BYTE >D0
+        BYTE >10,>3C,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 4 (dark blue)
+        BYTE >8C,>A0,>80,>08   ; Sprite 1: Y=1F0, X=160, Pattern >80, Color 7 (red)
+        ;BYTE >D0
 
-SPRMOVE
-        BYTE >08,>10,>00,>00   ; Sprite 0: down-right
-        BYTE >F8,>F0,>00,>00   ; Sprite 1: up-left
+COLORDATA
+        BYTE >1F,>1F,>1F,>1F,>1F,>1F,>1F,>1F   ; Repeat your color pair 32 times
+        BYTE >1F,>1F,>1F,>1F,>1F,>1F,>1F,>1F
+        BYTE >1F,>1F,>1F,>1F,>1F,>1F,>1F,>1F
+        BYTE >1F,>1F,>1F,>1F,>1F,>1F,>1F,>1F
