@@ -82,5 +82,5 @@ GFXDATA
         BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
 
 SPRATTR
-        BYTE >10,>3C,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 4 (dark blue)
-        BYTE >8C,>A0,>80,>08   ; Sprite 1: Y=1F0, X=160, Pattern >80, Color 7 (red)
+        BYTE >10,>3C,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 10 (yellow)
+        BYTE >8C,>A0,>80,>08   ; Sprite 1: Y=1F0, X=160, Pattern >80, Color 8 (red)

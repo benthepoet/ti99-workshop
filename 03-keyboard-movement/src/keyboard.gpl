@@ -107,10 +107,10 @@ MOVEDOWN
 ; Data
 ; ========================
 GFXDATA
-        BYTE >FF,>81,>81,>81,>81,>81,>81,>FF   ; Top + sides + bottom
-        BYTE >FF,>81,>81,>81,>81,>81,>81,>FF   ; repeated for the other 3 chars
-        BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
-        BYTE >FF,>81,>81,>81,>81,>81,>81,>FF
+        BYTE >01,>03,>03,>02,>0e,>17,>1f,>14
+        BYTE >17,>1e,>17,>0b,>03,>03,>02,>00
+        BYTE >c0,>e0,>60,>20,>38,>74,>dc,>14
+        BYTE >34,>3c,>f4,>e8,>e0,>60,>a0,>00
 
 SPRATTR
-        BYTE >10,>7A,>80,>0A   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 4 (dark blue)
+        BYTE >10,>7A,>80,>08   ; Sprite 0: Y=10, X=3C, Pattern >80, Color 8 (red)
